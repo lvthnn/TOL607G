@@ -7,7 +7,7 @@ class SegmentTree {
   private:
     vector<int> st, A; // st is binary tree, A is original array
     int n;
-    int left (int p)  { return p << 1; }
+    int left (int p) { return p << 1; }
     int right(int p) { return (p << 1) + 1; }
 
     /**
@@ -62,12 +62,13 @@ class SegmentTree {
      */
     void bfq(int p, int x, int i, int j) {
       if (i == j) // only satisfied when we find matching element
-        st[p] += 1;
+        st[p] = abs(st[p] - 1);
       else {
         int m = (i + j)/2;
+
         // determine interval to search in
-        if (x <= m) bfq(left(p), x, i, m);
-        else        bfq(right(p), x, m+1, j);
+        if   (x <= m) bfq(left(p), x, i, m);
+        else          bfq(right(p), x, m+1, j);
 
         // update sum of parent
         st[p] = st[left(p)] + st[right(p)];
@@ -85,8 +86,10 @@ class SegmentTree {
 
     void bfq(int x) { return bfq(1, x-1, 0, n - 1); }
 
-    void print() { for (int i = 0; i < st.size(); i++) cout << st[i] << endl; }
-
+    void print() { 
+      for (int i = 0; i < st.size(); i++) {
+        cout << st[i] << " ";
+      } cout << endl; } 
 };
 
 int main() {
@@ -94,8 +97,26 @@ int main() {
   cin >> n >> k;
 
   // initialize memory tree
-  int arr[n] = {0}; 
-  vector<int> A(arr, arr + 7);
+  int arr[n];
+  for (int i = 0; i < n; i++)
+    arr[i] = 0;
+
+  vector<int> A(arr, arr + n);
   SegmentTree st(A);
+
+  while (k-- > 0) {
+    char q;
+    int p1, p2;
+    cin >> q;
+
+    if (q == 'F') {
+      cin >> p1;
+      st.bfq(p1);
+    }
+    else if (q == 'C') {
+      cin >> p1 >> p2;
+      cout << st.rsq(p1, p2) << endl;
+    }
+  }
 
 }
